@@ -31,7 +31,7 @@ module HayBTech
       raise Error, "Invalid secret key: contains forbidden characters." if secret_key.match?(/[\r\n]/)
 
       @secret_key = secret_key
-      @base_url = options[:base_url] || ENV['HAYBTECH_API_URL'] || 'https://api.haybtech.com/v1'
+      @base_url = options[:base_url] || ENV['HAYBTECH_API_URL'] || 'https://app.haybtech.com/v1'
       @timeout = options[:timeout] || 15
 
       @payments = Resources::Payments.new(self)
