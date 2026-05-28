@@ -8,6 +8,32 @@ Official Ruby SDK for the HayBTech Payment Gateway API -- mobile payments across
 
 ---
 
+## Intégration par IA (Prompt pour Marchands)
+
+Si vous utilisez un assistant IA (comme Cursor, GitHub Copilot, ChatGPT, Claude, etc.), vous pouvez copier-coller le prompt suivant pour intégrer ce SDK de A à Z dans votre projet :
+
+```text
+Agis en tant qu'expert en développement Ruby on Rails. Je souhaite intégrer le SDK Ruby officiel de HayBTech (`haybtech-sdk`) pour accepter des paiements sur mon application Rails de A à Z.
+
+Voici ma stack technique actuelle :
+- Base de données : [ex: PostgreSQL avec ActiveRecord]
+- Modèle de commande : [décrivez brièvement votre modèle Order]
+
+Tâches à accomplir dans le code généré :
+1. **Initialisation** : Configurer le client HayBTech dans un initializer Rails (`config/initializers/haybtech.rb`) à partir des variables d'environnement (`HAYBTECH_SECRET_KEY`).
+2. **Checkout Controller** : Créer une action dans un contrôleur (ex: `payments_controller.rb`) pour lancer la transaction via `HayBTech.payments.create(...)` en lui passant les paramètres requis (merchant_ref, amount, currency='XOF', success_url, failed_url, callback_url) et rediriger l'utilisateur vers le guichet de paiement.
+3. **Webhook Controller** : Créer une action de webhook (ex: `/webhooks/haybtech`). Elle doit :
+   - Récupérer le payload brut (`request.raw_post`) et la signature (`request.headers['X-HayBTech-Signature']` ou `X-HayB-Signature`).
+   - Valider la signature à l'aide de `HayBTech.webhook.construct_event(payload, signature, secret)` avec le secret de webhook (`HAYBTECH_WEBHOOK_SECRET`).
+   - Modifier le statut de la commande de manière idempotente à la réception de `payment.success` (marquer comme payée) ou `payment.failed` (marquer comme échouée) en base de données.
+   - Renvoyer un statut de succès HTTP `head :ok`.
+4. **Sécurité & Gestion d'erreurs** : Gérer proprement les exceptions, désactiver la vérification CSRF de Rails uniquement sur la route du webhook, et sécuriser le traitement contre les attaques par rejeu.
+
+Génère le code complet, propre, commenté et conforme aux conventions Rails.
+```
+
+---
+
 ## Installation
 
 Add to your Gemfile:
@@ -187,7 +213,5 @@ This SDK is built for **Maximum Security**:
 
 | `HayBTech.webhook`        | Verify incoming webhook signatures              |
 
----
-
 MIT License
-# haybtech-ruby-sdk-
+
